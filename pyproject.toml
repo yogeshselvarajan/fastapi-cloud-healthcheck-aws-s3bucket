@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "fastapi-cloud-healthcheck-aws-s3bucket"
+version = "0.1.0"
+description = "This package is designed to validate the operational status of Amazon S3 buckets within an AWS account. It provides comprehensive diagnostics on the accessibility and functionality of an S3 bucket by performing key operations, including Bucket Accessibility, Object Operations and Bucket Policy Validation."
+authors = ["Yogesh Selvarajan <yogeshselvarajan@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/yogeshselvarajan/fastapi_cloud_healthcheck_aws_s3bucket"
+packages = [{include = "fastapi_cloud_healthcheck_aws_s3bucket"}]
+keywords = ["fastapi", "healthcheck", "cloud", "boto3", "aws", "s3", "storage"]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Framework :: FastAPI",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+boto3 = "^1.35.27"
+botocore = "^1.35.27"
+pytz = "^2024.2"
+fastapi_cloud_healthcheck = "^0.1.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+
