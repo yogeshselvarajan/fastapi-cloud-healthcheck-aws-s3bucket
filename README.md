@@ -15,7 +15,7 @@ Here is a sample FastAPI application that integrates the S3 bucket health check:
 
 ```python
 from fastapi import FastAPI
-from fastapi_cloud_healthcheck import HealthCheckFactory, healthCheckRoute
+from fastapi_cloud_healthcheck import HealthCheckFactory, create_health_check_route
 from fastapi_cloud_healthcheck_aws_s3bucket import HealthCheckS3Bucket
 
 app = FastAPI()
@@ -32,7 +32,7 @@ health_check_factory.add(
 )
 
 # Add the health check route to FastAPI
-app.add_api_route('/health', endpoint=healthCheckRoute(factory=health_check_factory))
+app.add_api_route('/health', endpoint=create_health_check_route(factory=health_check_factory))
 
 ```
 
