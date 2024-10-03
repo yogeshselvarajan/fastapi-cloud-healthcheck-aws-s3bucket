@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-cloud-healthcheck-aws-s3bucket"
-version = "0.1.0"
+version = "0.1.1"
 description = "This package is designed to validate the operational status of Amazon S3 buckets within an AWS account. It provides comprehensive diagnostics on the accessibility and functionality of an S3 bucket by performing key operations, including Bucket Accessibility, Object Operations and Bucket Policy Validation."
 authors = ["Yogesh Selvarajan <yogeshselvarajan@gmail.com>"]
 license = "MIT"

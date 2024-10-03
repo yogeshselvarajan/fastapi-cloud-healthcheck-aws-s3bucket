@@ -1,7 +1,5 @@
 import boto3
 from botocore.exceptions import ClientError
-from datetime import datetime
-import pytz
 from fastapi_cloud_healthcheck import HealthCheckBase, HealthCheckStatusEnum
 
 
@@ -15,16 +13,9 @@ class HealthCheckS3Bucket(HealthCheckBase):
             "region": region,
             "category": "storage",
             "serviceName": "S3",
-            "accountId": boto3.client('sts').get_caller_identity()['Account'],
-            "lastChecked": datetime.now(pytz.timezone('Asia/Kolkata')).isoformat()
+            "accountId": boto3.client('sts').get_caller_identity()['Account']
         }
-        self._statusMessages = {
-            "bucketCheck": "",
-            "objectUpload": "",
-            "objectRead": "",
-            "cleanup": "",
-            "bucketPolicy": ""
-        }
+        self._statusMessages = {}
 
     def __checkHealth__(self) -> HealthCheckStatusEnum:
         """Check the health of the S3 bucket."""
@@ -32,8 +23,9 @@ class HealthCheckS3Bucket(HealthCheckBase):
         # Create the S3 client
         try:
             s3_client = boto3.client('s3')
+            self._statusMessages['clientCreation'] = "S3 client created successfully."
         except Exception as e:
-            self._statusMessages['bucketCheck'] = f"Failed to initialize S3 client: {str(e)}"
+            self._statusMessages['clientCreation'] = f"Failed to initialize S3 client: {str(e)}"
             return HealthCheckStatusEnum.UNHEALTHY
 
         # Check if the bucket exists and is accessible
@@ -63,13 +55,23 @@ class HealthCheckS3Bucket(HealthCheckBase):
 
             # Cleanup the test object
             s3_client.delete_object(Bucket=self._bucket_name, Key=test_key)
-            self._statusMessages['cleanup'] = "Test object cleaned up successfully."
+            self._statusMessages['objectCleanup'] = "Test object cleaned up successfully."
 
         except ClientError as e:
             self._statusMessages['objectUpload'] = f"Error during object operation: {e.response['Error']['Message']}"
             return HealthCheckStatusEnum.UNHEALTHY
         except ValueError as ve:
             self._statusMessages['objectRead'] = str(ve)
+            return HealthCheckStatusEnum.UNHEALTHY
+
+        # Check multipart upload functionality
+        try:
+            response = s3_client.create_multipart_upload(Bucket=self._bucket_name, Key='multipart_test_object')
+            upload_id = response['UploadId']
+            s3_client.abort_multipart_upload(Bucket=self._bucket_name, Key='multipart_test_object', UploadId=upload_id)
+            self._statusMessages['multipartUpload'] = "Multipart upload is functional."
+        except ClientError as e:
+            self._statusMessages['multipartUpload'] = f"Multipart upload failed: {e}"
             return HealthCheckStatusEnum.UNHEALTHY
 
         # Check bucket policy

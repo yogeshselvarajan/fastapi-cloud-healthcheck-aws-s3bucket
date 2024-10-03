@@ -8,7 +8,6 @@ A FastAPI-based health check module for monitoring the health of AWS S3 buckets 
 * Object Operations: Performs test operations such as uploading, reading, and deleting objects within the bucket to ensure correct permissions.
 * Bucket Policy Validation: Checks for the presence of an S3 bucket policy and its retrieval status.
 * Automated Account Detection: Automatically retrieves the AWS Account ID for the health check metadata.
-* Timezone Support: Logs the last checked timestamp in Indian Standard Time (IST). 
 
 ## Adding Health Checks
 
@@ -35,10 +34,6 @@ health_check_factory.add(
 # Add the health check route to FastAPI
 app.add_api_route('/health', endpoint=healthCheckRoute(factory=health_check_factory))
 
-# Start the FastAPI server using Uvicorn
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", port=5000)
 ```
 
 In the above example:
@@ -56,3 +51,6 @@ The **S3 Bucket Health Check** performs the following operations:
     - **Cleanup**: Deletes the test object after validation.
   
 3. **Bucket Policy Check**: Ensures the bucket policy is accessible by attempting to retrieve it.
+4. **MultiPart Object Upload**: 
+   - **Initiation**: Starts a multipart upload for a test object.
+   - **Abortion**: Immediately aborts the multipart upload to verify that the multipart upload feature is functional.
